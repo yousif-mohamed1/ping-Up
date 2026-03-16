@@ -4,6 +4,7 @@ import Loading from '../compnents/loading'
 import StoriesBar from '../compnents/StoriesBar'
 import PostCard from '../compnents/postCard'
 import RecentMassges from '../compnents/RecentMassges'
+import { toast } from 'react-hot-toast'
 
 const Feed = () => {
   const [feeds, setFeeds] = useState([])
@@ -19,6 +20,17 @@ const Feed = () => {
     fetchFeeds()
   }, [])
 
+  const handleDeletePost = (postId) => {
+    setFeeds((prev) => prev.filter((post) => post._id !== postId))
+
+    const targetIndex = dummyPostsData.findIndex((post) => post._id === postId)
+    if (targetIndex !== -1) {
+      dummyPostsData.splice(targetIndex, 1)
+    }
+
+    toast.success('Post deleted')
+  }
+
   return !isLoading ? (
     <div className='h-full overflow-y-scroll py-6 px-4 xl:px-6 flex items-start justify-center xl:gap-8'>
       {/* stories and post list */}
@@ -26,7 +38,7 @@ const Feed = () => {
         <StoriesBar />
         <div className='px-4 pt-4 flex flex-col gap-2'>
           {feeds.map((post) => (
-              <PostCard key={post._id} post={post} />
+              <PostCard key={post._id} post={post} onDeletePost={handleDeletePost} />
             
           ))
           }

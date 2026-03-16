@@ -1,21 +1,28 @@
 import React from 'react'
-import { BadgeCheck, CalendarDays, MapPin, SquarePen } from 'lucide-react'
+import { BadgeCheck, CalendarDays, Link2, MapPin, SquarePen } from 'lucide-react'
 import moment from 'moment'
 import { useParams } from 'react-router-dom'
 import { dummyConnectionsData, dummyPostsData, dummyUserData } from '../assets/assets'
 import PostCard from '../compnents/postCard'
+import EditProfileDrawer from '../compnents/EditProfileDrawer'
 
 const Profile = () => {
   const { profileId } = useParams()
   const [activeTab, setActiveTab] = React.useState('posts')
+  const [editOpen, setEditOpen] = React.useState(false)
 
-  const profile = React.useMemo(() => {
+  const resolvedProfile = React.useMemo(() => {
     if (!profileId) {
       return dummyUserData
     }
 
     return dummyConnectionsData.find((user) => user._id === profileId) || dummyUserData
   }, [profileId])
+  const [profile, setProfile] = React.useState(resolvedProfile)
+
+  React.useEffect(() => {
+    setProfile(resolvedProfile)
+  }, [resolvedProfile])
 
   const posts = React.useMemo(() => {
     if (activeTab === 'media') {
@@ -36,11 +43,31 @@ const Profile = () => {
         : 'text-slate-500 hover:text-slate-700'
     }`
 
+  const handleProfileSave = (updatedData) => {
+    setProfile((prev) => {
+      const merged = {
+        ...prev,
+        ...updatedData,
+        updatedAt: new Date().toISOString(),
+      }
+
+      if (!profileId) {
+        Object.assign(dummyUserData, merged)
+      }
+
+      return merged
+    })
+  }
+
+  const coverStyle = profile.cover_gradient
+    ? { backgroundImage: `linear-gradient(90deg, ${profile.cover_gradient.from}, ${profile.cover_gradient.to})` }
+    : undefined
+
   return (
     <section className='min-h-full bg-[#f1f4f8] py-7'>
       <div className='mx-auto w-full max-w-5xl px-4 sm:px-6'>
         <div className='overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm'>
-          <div className='h-36 bg-gradient-to-r from-indigo-200 via-indigo-100 to-pink-200 sm:h-40' />
+          <div className='h-36 bg-gradient-to-r from-indigo-200 via-indigo-100 to-pink-200 sm:h-40' style={coverStyle} />
 
           <div className='relative px-5 pb-5 sm:px-7'>
             <img
@@ -63,6 +90,12 @@ const Profile = () => {
                     <MapPin className='h-4 w-4' />
                     {profile.location || 'Unknown'}
                   </span>
+                  {profile.website && (
+                    <a href={profile.website} target='_blank' rel='noreferrer' className='inline-flex items-center gap-1.5 hover:text-indigo-600'>
+                      <Link2 className='h-4 w-4' />
+                      {profile.website.replace(/^https?:\/\//, '')}
+                    </a>
+                  )}
                   <span className='inline-flex items-center gap-1.5'>
                     <CalendarDays className='h-4 w-4' />
                     Joined {moment(profile.createdAt).fromNow()}
@@ -72,6 +105,7 @@ const Profile = () => {
 
               <button
                 type='button'
+                onClick={() => setEditOpen(true)}
                 className='inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50'
               >
                 <SquarePen className='h-4 w-4' />
@@ -122,6 +156,13 @@ const Profile = () => {
           )}
         </div>
       </div>
+
+      <EditProfileDrawer
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        onSave={handleProfileSave}
+        profile={profile}
+      />
     </section>
   )
 }
