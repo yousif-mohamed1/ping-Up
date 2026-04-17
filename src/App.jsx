@@ -7,6 +7,7 @@ import Connections from './pages/connection'
 import Messages from './pages/massges'
 import ChatBox from './pages/chat_box'
 import Profile from './pages/profile'
+import Notifications from './pages/notifications'
 import CreatePost from './pages/create_post'
 import Settings from './pages/settings'
 import Layout from './pages/layout'
@@ -28,6 +29,7 @@ export const App = () => {
         <Route path='discover' element={<Discover />} />
         <Route path='profile' element={<Profile />} />
         <Route path='profile/:profileId' element={<Profile />} />
+        <Route path='notifications' element={<Notifications />} />
         <Route path='settings' element={<Settings />} />
         <Route path='create-post' element={<CreatePost />} />
       </Route>

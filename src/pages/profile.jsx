@@ -1,10 +1,11 @@
 import React from 'react'
-import { BadgeCheck, CalendarDays, Link2, MapPin, SquarePen } from 'lucide-react'
+import { BadgeCheck, CalendarDays, FileText, Heart, Image, Link2, MapPin, SquarePen } from 'lucide-react'
 import moment from 'moment'
 import { useParams } from 'react-router-dom'
 import { dummyConnectionsData, dummyPostsData, dummyUserData } from '../assets/assets'
 import PostCard from '../compnents/postCard'
 import EditProfileDrawer from '../compnents/EditProfileDrawer'
+import EmptyState from '../compnents/EmptyState'
 
 const Profile = () => {
   const { profileId } = useParams()
@@ -37,7 +38,7 @@ const Profile = () => {
   }, [activeTab])
 
   const tabButtonClass = (tab) =>
-    `h-10 rounded-lg px-8 text-sm font-semibold transition ${
+    `h-10 rounded-lg px-8 text-xs sm:text-sm font-semibold transition ${
       activeTab === tab
         ? 'bg-gradient-to-r from-indigo-600 to-violet-500 text-white shadow-[0_8px_18px_rgba(88,72,255,0.35)]'
         : 'text-slate-500 hover:text-slate-700'
@@ -64,28 +65,28 @@ const Profile = () => {
     : undefined
 
   return (
-    <section className='min-h-full bg-[#f1f4f8] py-7'>
+    <section className='min-h-full bg-[#f1f4f8] dark:bg-gray-950 py-7'>
       <div className='mx-auto w-full max-w-5xl px-4 sm:px-6'>
-        <div className='overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm'>
+        <div className='overflow-hidden rounded-2xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900'>
           <div className='h-36 bg-gradient-to-r from-indigo-200 via-indigo-100 to-pink-200 sm:h-40' style={coverStyle} />
 
-          <div className='relative px-5 pb-5 sm:px-7'>
+          <div className='relative px-4 pb-5 sm:px-7 overflow-hidden'>
             <img
               src={profile.profile_picture}
               alt={profile.full_name}
-              className='-mt-12 h-24 w-24 rounded-full border-4 border-white bg-white object-cover shadow sm:-mt-14 sm:h-28 sm:w-28'
+              className='-mt-12 h-24 w-24 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 object-cover shadow sm:-mt-14 sm:h-28 sm:w-28'
             />
 
             <div className='mt-3 flex flex-wrap items-start justify-between gap-4'>
               <div>
                 <div className='flex items-center gap-2'>
-                  <h1 className='text-3xl font-semibold text-slate-900'>{profile.full_name}</h1>
+                  <h1 className='text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-gray-100 break-words'>{profile.full_name}</h1>
                   {profile.is_verified && <BadgeCheck className='h-5 w-5 text-sky-500' />}
                 </div>
-                <p className='text-base text-slate-500'>@{profile.username}</p>
-                <p className='mt-3 max-w-2xl text-sm leading-6 text-slate-600 whitespace-pre-line'>{profile.bio}</p>
+                <p className='text-base text-slate-500 dark:text-gray-400'>@{profile.username}</p>
+                <p className='mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-gray-300 whitespace-pre-line break-words overflow-hidden'>{profile.bio}</p>
 
-                <div className='mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-500'>
+                <div className='mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-gray-400'>
                   <span className='inline-flex items-center gap-1.5'>
                     <MapPin className='h-4 w-4' />
                     {profile.location || 'Unknown'}
@@ -106,25 +107,25 @@ const Profile = () => {
               <button
                 type='button'
                 onClick={() => setEditOpen(true)}
-                className='inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50'
+                className='inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700'
               >
                 <SquarePen className='h-4 w-4' />
                 Edit
               </button>
             </div>
 
-            <div className='mt-4 border-t border-slate-200 pt-4'>
-              <div className='flex flex-wrap items-center gap-6 text-sm text-slate-600'>
+            <div className='mt-4 border-t border-slate-200 dark:border-gray-700 pt-4'>
+              <div className='flex flex-wrap items-center gap-6 text-sm text-slate-600 dark:text-gray-300'>
                 <p>
-                  <span className='mr-1 font-semibold text-slate-900'>{dummyPostsData.length}</span>
+                  <span className='mr-1 font-semibold text-slate-900 dark:text-gray-100'>{dummyPostsData.length}</span>
                   Posts
                 </p>
                 <p>
-                  <span className='mr-1 font-semibold text-slate-900'>{profile.followers?.length || 0}</span>
+                  <span className='mr-1 font-semibold text-slate-900 dark:text-gray-100'>{profile.followers?.length || 0}</span>
                   Followers
                 </p>
                 <p>
-                  <span className='mr-1 font-semibold text-slate-900'>{profile.following?.length || 0}</span>
+                  <span className='mr-1 font-semibold text-slate-900 dark:text-gray-100'>{profile.following?.length || 0}</span>
                   Following
                 </p>
               </div>
@@ -132,7 +133,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className='mx-auto mt-5 w-full max-w-md rounded-xl border border-slate-200 bg-white p-1 shadow-sm'>
+        <div className='mx-auto mt-5 w-full max-w-md rounded-xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-1 shadow-sm dark:shadow-gray-900 px-2 sm:px-1'>
           <div className='grid grid-cols-3 gap-1'>
             <button type='button' className={tabButtonClass('posts')} onClick={() => setActiveTab('posts')}>
               Posts
@@ -150,9 +151,15 @@ const Profile = () => {
           {posts.length > 0 ? (
             posts.map((post) => <PostCard key={post._id} post={post} />)
           ) : (
-            <div className='rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center text-slate-500'>
-              No {activeTab} yet.
-            </div>
+            <EmptyState
+              icon={activeTab === 'media' ? Image : activeTab === 'likes' ? Heart : FileText}
+              title={`No ${activeTab} yet`}
+              description={
+                activeTab === 'posts' ? 'No posts shared yet.'
+                  : activeTab === 'media' ? 'No photos or videos posted yet.'
+                    : 'No liked posts yet.'
+              }
+            />
           )}
         </div>
       </div>

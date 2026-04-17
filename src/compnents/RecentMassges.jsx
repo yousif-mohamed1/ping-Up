@@ -14,22 +14,22 @@ const RecentMassges = () => {
     }, [])
 
   return (
-    <div className='bg-white max-w-xs mt-4 p-4 min-h-20 rounded-md shadow text-xs
-    test-slate-800'>
-        <h3 className='font-semibold text-slate-8 nb-4'>Recent Messages</h3>
+    <div className='bg-white dark:bg-gray-800 max-w-xs mt-4 p-4 min-h-20 rounded-md shadow dark:shadow-gray-900 text-xs
+    test-slate-800 dark:text-gray-100'>
+        <h3 className='font-semibold text-slate-8 dark:text-gray-100 nb-4'>Recent Messages</h3>
         <div className='flex flex-col max-h-56 overflow-y-scroll no-scrollbar'>
             {
                 massages.map((massage) => (
                     <div key={massage._id} className='flex items-start gap-2 py-2
-                    hover:bg-slate-100 cursor-pointer' onClick={() => navigate(`/messages/${massage.from_user_id._id}`)}>
+                    hover:bg-slate-100 dark:hover:bg-gray-700 cursor-pointer' onClick={() => navigate(`/messages/${massage.from_user_id._id}`)}>
                         <img src={massage.from_user_id.profile_picture} alt="" className='w-8 h-8 rounded-full object-cover shrink-0' />
                         <div className='w-full'>
                             <div className='flex justify-between'>
                             <p className='font-medium'>{massage.from_user_id.full_name}</p>
-                            <p className='rest-[10px] text-slate-400'>{moment(massage.createdAt).fromNow()}</p>
+                            <p className='rest-[10px] text-slate-400 dark:text-gray-400'>{moment(massage.createdAt).fromNow()}</p>
                         </div>
                         <div className='flex justify-between'>
-                            <p className='text-gray-500'>
+                            <p className='text-gray-500 dark:text-gray-300'>
                                 {massage.text || 'Media'}
                             </p>
                             {!massage.seen && <p1 className='bg-indigo-500

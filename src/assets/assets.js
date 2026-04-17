@@ -3,7 +3,7 @@ import sample_cover from './sample_cover.jpg'
 import sample_profile from './sample_profile.jpg'
 import bgImage from './bgImage.png'
 import group_users from './group_users.png'
-import { Home, MessageCircle, Search, Settings2, UserIcon, Users } from 'lucide-react'
+import { Bell, Home, MessageCircle, Search, Settings2, UserIcon, Users } from 'lucide-react'
 import sponsored_img from './sponsored_img.png'
 
 export const assets = {
@@ -21,6 +21,7 @@ export const menuItemsData = [
     { to: '/connections', label: 'Connections', Icon: Users },
     { to: '/discover', label: 'Discover', Icon: Search },
     { to: '/profile', label: 'Profile', Icon: UserIcon },
+    { to: '/notifications', label: 'Notifications', Icon: Bell },
     { to: '/settings', label: 'Settings', Icon: Settings2 },
 ];
 
@@ -294,4 +295,84 @@ export const dummyFollowingData = [
 
 export const dummyPendingConnectionsData = [
     dummyUserData
+]
+
+export const dummyNotificationsData = [
+    {
+        _id: 'n1',
+        type: 'follow',
+        user: dummyUser2Data,
+        message: 'started following you',
+        seen: false,
+        createdAt: '2025-07-25T08:06:14.436Z',
+    },
+    {
+        _id: 'n2',
+        type: 'like',
+        user: dummyUser3Data,
+        message: 'liked your post',
+        post_preview: 'Finally, got the car!',
+        seen: false,
+        createdAt: '2025-07-25T07:00:00.000Z',
+    },
+    {
+        _id: 'n3',
+        type: 'comment',
+        user: dummyUser2Data,
+        message: 'commented on your post',
+        post_preview: 'We\'re a small #team with a big vision...',
+        comment_text: 'This is so inspiring! 🔥',
+        seen: true,
+        createdAt: '2025-07-24T15:30:00.000Z',
+    },
+    {
+        _id: 'n4',
+        type: 'mention',
+        user: dummyUser3Data,
+        message: 'mentioned you in a post',
+        post_preview: 'Shoutout to @john_warren for the help!',
+        seen: true,
+        createdAt: '2025-07-24T10:00:00.000Z',
+    },
+    {
+        _id: 'n5',
+        type: 'like',
+        user: dummyUser3Data,
+        message: 'liked your post',
+        post_preview: 'Hello, Everyone this is my first Post',
+        seen: true,
+        createdAt: '2025-07-23T09:00:00.000Z',
+    },
+    {
+        _id: 'n6',
+        type: 'follow',
+        user: dummyUser3Data,
+        message: 'started following you',
+        seen: true,
+        createdAt: '2025-07-22T08:00:00.000Z',
+    },
+]
+
+export const dummyCommentsData = [
+    {
+        _id: 'c1',
+        user: dummyUser2Data,
+        text: 'This is absolutely amazing! 🔥',
+        createdAt: '2025-07-25T08:10:00.000Z',
+        likes: 4,
+    },
+    {
+        _id: 'c2',
+        user: dummyUser3Data,
+        text: 'Love this so much, keep it up!',
+        createdAt: '2025-07-25T08:20:00.000Z',
+        likes: 2,
+    },
+    {
+        _id: 'c3',
+        user: dummyUser2Data,
+        text: 'Can you share more details about this? #curious',
+        createdAt: '2025-07-24T15:00:00.000Z',
+        likes: 1,
+    },
 ]

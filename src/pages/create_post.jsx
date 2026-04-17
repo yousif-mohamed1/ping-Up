@@ -118,8 +118,8 @@ const CreatePost = () => {
   }
 
   return (
-    <div className='min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8'>
-      <div className='max-w-xl'>
+    <div className='min-h-screen bg-slate-50 px-3 sm:px-6 lg:px-8 py-6 sm:py-8'>
+      <div className='max-w-2xl mx-auto w-full'>
         <CreatePostHeader isEditing={Boolean(editingPostId)} />
         <CreatePostForm
           user={dummyUserData}

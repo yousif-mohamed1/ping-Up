@@ -4,13 +4,21 @@ import moment from 'moment'
 import { toast } from 'react-hot-toast'
 import { dummyUserData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import PostDetailModal from './PostDetailModal'
 
 const postCard = ({ post, onDeletePost }) => {
     const [liked, setLiked] = React.useState(post.likes_count || [])
     const [menuOpen, setMenuOpen] = React.useState(false)
+    const [showDetail, setShowDetail] = React.useState(false)
     const likes = Array.isArray(liked) ? liked : []
     const currentuser = dummyUserData
-    const handleLike = async () => {}
+    const handleLike = () => {
+        setLiked(prev =>
+            Array.isArray(prev) && prev.includes(currentuser._id)
+                ? prev.filter(id => id !== currentuser._id)
+                : [...(Array.isArray(prev) ? prev : []), currentuser._id]
+        )
+    }
     const navigate = useNavigate()
     const isOwner = post?.user?._id === currentuser?._id
 
@@ -55,11 +63,11 @@ const postCard = ({ post, onDeletePost }) => {
     }
 
   return (
-    <div className='bg-white rounded-xl shadow p-4 space-y-4
-    w-full max-w-2xl'>
+    <div className='bg-white dark:bg-gray-800 rounded-xl shadow dark:shadow-gray-900 p-4 space-y-4
+    w-full max-w-2xl overflow-hidden'>
         {/*user info*/}
         <div className='flex items-start justify-between gap-3'>
-            <div onClick={()=> navigate('/profile/'+post.user._id)} className='inline-flex items-center gap-3 cursor-pointer'>
+            <div onClick={()=> navigate('/profile/'+post.user._id)} className='inline-flex items-center gap-3 cursor-pointer dark:text-gray-100'>
                 <img src={post.user.profile_picture} alt={post.user.full_name} className='w-10 h-10 rounded-full rounded-full shadow' />
                 <div className='flex items-center space-x-1'>
                     <span>
@@ -67,7 +75,7 @@ const postCard = ({ post, onDeletePost }) => {
                         <BadgeCheck size={16} className='text-blue-500 w-4 h-4 inline ml-1' />
                     </span>
                 </div>
-                <div className='text-gray-500 text-sm'>
+                <div className='text-gray-500 dark:text-gray-400 text-sm'>
                     @{post.user.username} . {moment(post.createdAt).fromNow()}
                 </div>
             </div>
@@ -80,7 +88,7 @@ const postCard = ({ post, onDeletePost }) => {
                             e.stopPropagation()
                             setMenuOpen((prev) => !prev)
                         }}
-                        className='rounded-md p-2 text-gray-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer'
+                        className='rounded-md p-2 text-gray-400 transition-colors hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-slate-700 dark:hover:text-gray-200 cursor-pointer'
                         aria-label='Post options'
                         title='Post options'
                     >
@@ -88,18 +96,18 @@ const postCard = ({ post, onDeletePost }) => {
                     </button>
 
                     {menuOpen && (
-                        <div className='absolute right-0 top-11 z-20 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg'>
+                        <div className='absolute right-0 top-11 z-20 w-44 rounded-xl border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-800 p-1.5 shadow-lg dark:shadow-gray-900'>
                             <button
                                 type='button'
                                 onClick={handleEditClick}
-                                className='flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 cursor-pointer'
+                                className='flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-slate-700 dark:text-gray-200 transition-colors hover:bg-slate-100 dark:hover:bg-gray-700 cursor-pointer'
                             >
                                 <Pencil className='h-4 w-4' /> Edit post
                             </button>
                             <button
                                 type='button'
                                 onClick={handleVisibilityClick}
-                                className='flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 cursor-pointer'
+                                className='flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-slate-700 dark:text-gray-200 transition-colors hover:bg-slate-100 dark:hover:bg-gray-700 cursor-pointer'
                             >
                                 <Eye className='h-4 w-4' /> Check visibility
                             </button>
@@ -115,47 +123,61 @@ const postCard = ({ post, onDeletePost }) => {
                 </div>
             )}
         </div>
-        {/*post content*/}
-        <div className='text-gray-800'>
-                        {post.content && (
-                            <div className='text-gray-800 text-sm whitespace-pre-line'>
-                                {renderContentWithHashtags(post.content)}
-                            </div>
-                        )}
+        <div onClick={() => setShowDetail(true)} className='cursor-pointer'>
+            {/*post content*/}
+            <div className='text-gray-800 dark:text-gray-100'>
+                            {post.content && (
+                                <div className='text-gray-800 dark:text-gray-100 text-sm whitespace-pre-line break-words overflow-hidden'>
+                                    {renderContentWithHashtags(post.content)}
+                                </div>
+                            )}
+            </div>
+            {/*post media*/}
+            {post.image_urls?.length > 0 && (
+                <div className='grid grid-cols-2 gap-2'>
+                    {post.image_urls.map((img, index) => (
+                        <img
+                          src={img}
+                          alt='Post media'
+                          className={`w-full object-cover rounded-lg ${post.image_urls.length === 1 ? 'col-span-2 h-auto' : 'h-48'}`}
+                          key={index}
+                        />
+                    ))}
+                </div>
+            )}
+            {post.video_url && (
+                <div className='overflow-hidden rounded-lg'>
+                    <video src={post.video_url} controls className='w-full object-cover' />
+                </div>
+            )}
         </div>
-        {/*post media*/}
-        {post.image_urls?.length > 0 && (
-            <div className='grid grid-cols-2 gap-2'>
-                {post.image_urls.map((img, index) => (
-                    <img
-                      src={img}
-                      alt='Post media'
-                      className={`w-full object-cover rounded-lg ${post.image_urls.length === 1 ? 'col-span-2 h-auto' : 'h-48'}`}
-                      key={index}
-                    />
-                ))}
-            </div>
-        )}
-        {post.video_url && (
-            <div className='overflow-hidden rounded-lg'>
-                <video src={post.video_url} controls className='w-full object-cover' />
-            </div>
-        )}
         {/*Actions*/}
-        <div className='flex items-center gap-4 text-gray-600 text-sm pt-2 border-t border-gray-300'>
+        <div className='flex items-center gap-3 sm:gap-4 text-gray-600 dark:text-gray-400 text-sm pt-2 border-t border-gray-300 dark:border-gray-600 flex-wrap'>
             <div className='flex items-center gap-1'>
-                <Heart className={`w-4 h-4 cursor-pointer ${likes.includes(currentuser.id) && 'fill-red-500 text-red-500'}`} onClick={handleLike} />
+                <Heart className={`w-4 h-4 cursor-pointer transition
+  ${likes.includes(currentuser._id) ? 'fill-red-500 text-red-500' : 'hover:text-red-400'}`}
+  onClick={(e) => { e.stopPropagation(); handleLike() }}
+                />
                 <span>{liked.length}</span>
             </div>
-            <div className='flex items-center gap-1'>
-                <MessageCircle className={`w-4 h-4 cursor-pointer ${likes.includes(currentuser.id) && 'fill-red-500 text-red-500'}`} onClick={handleLike} />
+            <div className='flex items-center gap-1 cursor-pointer hover:text-indigo-500 transition'
+  onClick={() => setShowDetail(true)}>
+                <MessageCircle className='w-4 h-4' />
                 <span>{12}</span>
             </div>
             <div className='flex items-center gap-1'>
-                <Share2 className={`w-4 h-4 cursor-pointer ${likes.includes(currentuser.id) && 'fill-red-500 text-red-500'}`} onClick={handleLike} />
+                <Share2 className='w-4 h-4 cursor-pointer hover:text-indigo-500 transition' />
                 <span>{7}</span>
             </div>
         </div>
+        {showDetail && (
+            <PostDetailModal
+                post={post}
+                likes={likes}
+                onToggleLike={handleLike}
+                onClose={() => setShowDetail(false)}
+            />
+        )}
     </div>
   )
 }

@@ -31,7 +31,7 @@ useEffect(() => {
 }, [])
 
   return (
-        <div className='w-full max-w-full no-scrollbar overflow-x-auto px-4' >
+        <div className='w-full max-w-full no-scrollbar overflow-x-auto px-4 touch-pan-x' >
             <div className='flex gap-4 py-5'>
                 {/* Add story Card components here */}
                 <div onClick={()=> setShowModel(true)} className=' rounded-lg shadow-sm min-w-30 max-w-30 max-h-40 aspect-

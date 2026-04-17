@@ -3,25 +3,25 @@ import { MapPin, User, UserPlus, Users } from 'lucide-react'
 
 const UserCard = ({ user, isFollowing, onToggleFollow, onOpenProfile }) => {
   return (
-    <article className='rounded-xl border border-[#e5e8ef] bg-white p-5 shadow-[0_8px_24px_rgba(30,41,59,0.06)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_26px_rgba(30,41,59,0.1)]'>
+    <article className='rounded-xl border border-[#e5e8ef] dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-[0_8px_24px_rgba(30,41,59,0.06)] dark:shadow-gray-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_26px_rgba(30,41,59,0.1)]'>
       <button type='button' className='mx-auto block' onClick={() => onOpenProfile(user._id)}>
         <img
           src={user.profile_picture}
           alt={user.full_name}
-          className='h-16 w-16 rounded-full border-4 border-[#eff1f7] object-cover'
+          className='h-16 w-16 rounded-full border-4 border-[#eff1f7] dark:border-gray-700 object-cover'
         />
       </button>
 
       <div className='mt-3 text-center'>
         <button
           type='button'
-          className='text-[2rem] font-semibold leading-none text-[#1e2538]'
+          className='text-[2rem] font-semibold leading-none text-[#1e2538] dark:text-gray-100'
           onClick={() => onOpenProfile(user._id)}
         >
           {user.full_name}
         </button>
-        <p className='mt-1.5 text-2xl text-[#8a90a4]'>@{user.username}</p>
-        <p className='mx-auto mt-2 min-h-[64px] max-w-[240px] text-[1rem] leading-relaxed text-[#5c6478]'>
+        <p className='mt-1.5 text-2xl text-[#8a90a4] dark:text-gray-400'>@{user.username}</p>
+        <p className='mx-auto mt-2 min-h-[64px] max-w-[240px] text-[1rem] leading-relaxed text-[#5c6478] dark:text-gray-300'>
           {(user.bio || '')
             .replace(/\r?\n/g, ' ')
             .replace(/\s+/g, ' ')
@@ -30,11 +30,11 @@ const UserCard = ({ user, isFollowing, onToggleFollow, onOpenProfile }) => {
       </div>
 
       <div className='mt-3.5 flex flex-wrap items-center justify-center gap-2'>
-        <div className='inline-flex items-center gap-1 rounded-full border border-[#e3e7ef] bg-[#fdfdff] px-3 py-1 text-sm font-medium text-[#6b7388]'>
+        <div className='inline-flex items-center gap-1 rounded-full border border-[#e3e7ef] dark:border-gray-700 bg-[#fdfdff] dark:bg-gray-700 px-3 py-1 text-sm font-medium text-[#6b7388] dark:text-gray-300'>
           <MapPin className='h-4 w-4' />
           <span>{user.location || 'Unknown'}</span>
         </div>
-        <div className='inline-flex items-center gap-1 rounded-full border border-[#e3e7ef] bg-[#fdfdff] px-3 py-1 text-sm font-medium text-[#6b7388]'>
+        <div className='inline-flex items-center gap-1 rounded-full border border-[#e3e7ef] dark:border-gray-700 bg-[#fdfdff] dark:bg-gray-700 px-3 py-1 text-sm font-medium text-[#6b7388] dark:text-gray-300'>
           <Users className='h-4 w-4' />
           <span>{user.followers?.length || 0} Followers</span>
         </div>
@@ -52,7 +52,7 @@ const UserCard = ({ user, isFollowing, onToggleFollow, onOpenProfile }) => {
         <button
           type='button'
           onClick={() => isFollowing && onOpenProfile(user._id)}
-          className={`h-10 rounded-md border border-[#ced4e3] text-[#6f7690] transition hover:bg-[#f7f8fc] ${
+          className={`h-10 rounded-md border border-[#ced4e3] dark:border-gray-700 text-[#6f7690] dark:text-gray-300 transition hover:bg-[#f7f8fc] dark:hover:bg-gray-700 ${
             isFollowing ? 'w-auto px-3 text-sm font-medium' : 'grid w-11 place-items-center'
           }`}
         >
