@@ -1,0 +1,175 @@
+# Frontend Unit Test Validation Results
+
+## Run Metadata
+- Date: 2026-04-17
+- Local time: 16:26:08 +02:00
+- Workspace: C:/insta_clone/Ro'ya
+- Scope: Frontend/unit test suite (Vitest)
+
+## Commands Executed
+1. npm run test:ci
+- Script: vitest run --passWithNoTests --reporter=default --reporter=junit --outputFile.junit=reports/junit.xml
+- Result: PASS
+- Summary: 40 test files passed, 149 tests passed, 0 failed
+- Duration: 8.89s
+- Artifact: reports/junit.xml
+
+2. npm run coverage
+- Script: vitest run --coverage --passWithNoTests
+- Result: PASS
+- Summary: 40 test files passed, 149 tests passed, 0 failed
+- Duration: 9.29s
+- Artifacts: coverage directory outputs including HTML report, lcov, and json summary
+
+## Totals
+- Test files: 40 passed, 0 failed
+- Tests: 149 passed, 0 failed
+- Full suite passed: Yes
+
+## Coverage Summary (from coverage/coverage-summary.json)
+- Statements: 87.94%
+- Branches: 79.38%
+- Functions: 78.44%
+- Lines: 91.22%
+
+## Generated/Updated Artifacts In This Run
+- reports/junit.xml
+- coverage/base.css
+- coverage/block-navigation.js
+- coverage/coverage-summary.json
+- coverage/favicon.png
+- coverage/index.html
+- coverage/lcov.info
+- coverage/prettify.css
+- coverage/prettify.js
+- coverage/sort-arrow-sprite.png
+- coverage/sorter.js
+- coverage/lcov-report/base.css
+- coverage/lcov-report/block-navigation.js
+- coverage/lcov-report/favicon.png
+- coverage/lcov-report/index.html
+- coverage/lcov-report/prettify.css
+- coverage/lcov-report/prettify.js
+- coverage/lcov-report/sort-arrow-sprite.png
+- coverage/lcov-report/sorter.js
+- coverage/lcov-report/src/App.jsx.html
+- coverage/lcov-report/src/index.html
+- coverage/lcov-report/src/assets/assets.js.html
+- coverage/lcov-report/src/assets/bgImage.png.html
+- coverage/lcov-report/src/assets/group_users.png.html
+- coverage/lcov-report/src/assets/index.html
+- coverage/lcov-report/src/assets/logo.svg.html
+- coverage/lcov-report/src/assets/sample_cover.jpg.html
+- coverage/lcov-report/src/assets/sample_profile.jpg.html
+- coverage/lcov-report/src/assets/sponsored_img.png.html
+- coverage/lcov-report/src/compnents/ChatBoxCameraModal.jsx.html
+- coverage/lcov-report/src/compnents/ChatBoxHeader.jsx.html
+- coverage/lcov-report/src/compnents/ChatBoxInputBar.jsx.html
+- coverage/lcov-report/src/compnents/ChatBoxMessages.jsx.html
+- coverage/lcov-report/src/compnents/ChatComposer.jsx.html
+- coverage/lcov-report/src/compnents/ChatHeader.jsx.html
+- coverage/lcov-report/src/compnents/ChatMessages.jsx.html
+- coverage/lcov-report/src/compnents/CreatePostForm.jsx.html
+- coverage/lcov-report/src/compnents/CreatePostHeader.jsx.html
+- coverage/lcov-report/src/compnents/EditProfileDrawer.jsx.html
+- coverage/lcov-report/src/compnents/EmptyState.jsx.html
+- coverage/lcov-report/src/compnents/GlobalSearch.jsx.html
+- coverage/lcov-report/src/compnents/index.html
+- coverage/lcov-report/src/compnents/loading.jsx.html
+- coverage/lcov-report/src/compnents/MediaViewerModal.jsx.html
+- coverage/lcov-report/src/compnents/MenuItems.jsx.html
+- coverage/lcov-report/src/compnents/postCard.jsx.html
+- coverage/lcov-report/src/compnents/PostDetailModal.jsx.html
+- coverage/lcov-report/src/compnents/RecentMassges.jsx.html
+- coverage/lcov-report/src/compnents/SideBar.jsx.html
+- coverage/lcov-report/src/compnents/StoriesBar.jsx.html
+- coverage/lcov-report/src/compnents/StoryModel.jsx.html
+- coverage/lcov-report/src/compnents/storyViewer.jsx.html
+- coverage/lcov-report/src/compnents/UserCard.jsx.html
+- coverage/lcov-report/src/compnents/skeletons/index.html
+- coverage/lcov-report/src/compnents/skeletons/NotificationSkeleton.jsx.html
+- coverage/lcov-report/src/compnents/skeletons/PostCardSkeleton.jsx.html
+- coverage/lcov-report/src/compnents/skeletons/UserCardSkeleton.jsx.html
+- coverage/lcov-report/src/context/index.html
+- coverage/lcov-report/src/context/ThemeContext.jsx.html
+- coverage/lcov-report/src/pages/chat_box.jsx.html
+- coverage/lcov-report/src/pages/connection.jsx.html
+- coverage/lcov-report/src/pages/create_post.jsx.html
+- coverage/lcov-report/src/pages/discover.jsx.html
+- coverage/lcov-report/src/pages/feed.jsx.html
+- coverage/lcov-report/src/pages/index.html
+- coverage/lcov-report/src/pages/layout.jsx.html
+- coverage/lcov-report/src/pages/login.jsx.html
+- coverage/lcov-report/src/pages/massges.jsx.html
+- coverage/lcov-report/src/pages/notifications.jsx.html
+- coverage/lcov-report/src/pages/profile.jsx.html
+- coverage/lcov-report/src/pages/settings.jsx.html
+- coverage/lcov-report/src/test/index.html
+- coverage/lcov-report/src/test/test-utils.jsx.html
+- coverage/lcov-report/src/test/mocks/browserApis.js.html
+- coverage/lcov-report/src/test/mocks/clerk-react.js.html
+- coverage/lcov-report/src/test/mocks/index.html
+- coverage/src/App.jsx.html
+- coverage/src/index.html
+- coverage/src/assets/assets.js.html
+- coverage/src/assets/bgImage.png.html
+- coverage/src/assets/group_users.png.html
+- coverage/src/assets/index.html
+- coverage/src/assets/logo.svg.html
+- coverage/src/assets/sample_cover.jpg.html
+- coverage/src/assets/sample_profile.jpg.html
+- coverage/src/assets/sponsored_img.png.html
+- coverage/src/compnents/ChatBoxCameraModal.jsx.html
+- coverage/src/compnents/ChatBoxHeader.jsx.html
+- coverage/src/compnents/ChatBoxInputBar.jsx.html
+- coverage/src/compnents/ChatBoxMessages.jsx.html
+- coverage/src/compnents/ChatComposer.jsx.html
+- coverage/src/compnents/ChatHeader.jsx.html
+- coverage/src/compnents/ChatMessages.jsx.html
+- coverage/src/compnents/CreatePostForm.jsx.html
+- coverage/src/compnents/CreatePostHeader.jsx.html
+- coverage/src/compnents/EditProfileDrawer.jsx.html
+- coverage/src/compnents/EmptyState.jsx.html
+- coverage/src/compnents/GlobalSearch.jsx.html
+- coverage/src/compnents/index.html
+- coverage/src/compnents/loading.jsx.html
+- coverage/src/compnents/MediaViewerModal.jsx.html
+- coverage/src/compnents/MenuItems.jsx.html
+- coverage/src/compnents/postCard.jsx.html
+- coverage/src/compnents/PostDetailModal.jsx.html
+- coverage/src/compnents/RecentMassges.jsx.html
+- coverage/src/compnents/SideBar.jsx.html
+- coverage/src/compnents/StoriesBar.jsx.html
+- coverage/src/compnents/StoryModel.jsx.html
+- coverage/src/compnents/storyViewer.jsx.html
+- coverage/src/compnents/UserCard.jsx.html
+- coverage/src/compnents/skeletons/index.html
+- coverage/src/compnents/skeletons/NotificationSkeleton.jsx.html
+- coverage/src/compnents/skeletons/PostCardSkeleton.jsx.html
+- coverage/src/compnents/skeletons/UserCardSkeleton.jsx.html
+- coverage/src/context/index.html
+- coverage/src/context/ThemeContext.jsx.html
+- coverage/src/pages/chat_box.jsx.html
+- coverage/src/pages/connection.jsx.html
+- coverage/src/pages/create_post.jsx.html
+- coverage/src/pages/discover.jsx.html
+- coverage/src/pages/feed.jsx.html
+- coverage/src/pages/index.html
+- coverage/src/pages/layout.jsx.html
+- coverage/src/pages/login.jsx.html
+- coverage/src/pages/massges.jsx.html
+- coverage/src/pages/notifications.jsx.html
+- coverage/src/pages/profile.jsx.html
+- coverage/src/pages/settings.jsx.html
+- coverage/src/test/index.html
+- coverage/src/test/test-utils.jsx.html
+- coverage/src/test/mocks/browserApis.js.html
+- coverage/src/test/mocks/clerk-react.js.html
+- coverage/src/test/mocks/index.html
+
+## Notes / Known Limitations
+- Test execution includes non-failing jsdom/runtime warnings from existing UI behavior:
+  - Empty string image src warnings in EditProfileDrawer test paths.
+  - Unrecognized <p1> tag warning in RecentMassges test path.
+  - jsdom reports HTMLMediaElement.play as not implemented during chat_box coverage run.
+- These warnings did not fail tests; all tests passed in both commands.
