@@ -30,12 +30,14 @@ public class PostService {
         this.userService = userService;
     }
 
+    @Transactional(readOnly = true)
     public List<PostDtos.PostResponse> feed() {
         return postRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<PostDtos.PostResponse> byUser(Long userId) {
         User user = userService.getUser(userId);
         return postRepository.findByUserOrderByCreatedAtDesc(user).stream()

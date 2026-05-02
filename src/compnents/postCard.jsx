@@ -5,23 +5,37 @@ import { toast } from 'react-hot-toast'
 import { dummyUserData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { api, ensureDemoSession, normalizePost } from '../services/api'
+import PostDetailModal from './PostDetailModal'
 
 const postCard = ({ post, onDeletePost }) => {
-    const [liked, setLiked] = React.useState(post.likes_count || [])
+    const getInitialLikeState = React.useCallback((sourcePost) => {
+        const likesCount = Array.isArray(sourcePost?.likes_count) ? sourcePost.likes_count.length : 0
+        return {
+            count: Number(sourcePost?.likesTotal ?? likesCount),
+            likedByMe: Boolean(sourcePost?.likedByMe ?? sourcePost?.likes_count?.includes(dummyUserData._id)),
+        }
+    }, [])
+    const [likeState, setLikeState] = React.useState(() => getInitialLikeState(post))
     const [menuOpen, setMenuOpen] = React.useState(false)
-    const likes = Array.isArray(liked) ? liked : []
+    const [detailOpen, setDetailOpen] = React.useState(false)
     const currentuser = dummyUserData
+
+    React.useEffect(() => {
+        setLikeState(getInitialLikeState(post))
+    }, [getInitialLikeState, post])
+
     const handleLike = async () => {
         try {
             await ensureDemoSession()
             const updatedPost = normalizePost(await api.posts.like(post._id))
-            setLiked(updatedPost.likes_count || [])
+            setLikeState(getInitialLikeState(updatedPost))
         } catch {
-            setLiked((prev) => {
-                const currentId = currentuser._id
-                return prev.includes(currentId)
-                    ? prev.filter((id) => id !== currentId)
-                    : [...prev, currentId]
+            setLikeState((prev) => {
+                const likedByMe = !prev.likedByMe
+                return {
+                    likedByMe,
+                    count: Math.max(0, prev.count + (likedByMe ? 1 : -1)),
+                }
             })
         }
     }
@@ -158,18 +172,29 @@ const postCard = ({ post, onDeletePost }) => {
         {/*Actions*/}
         <div className='flex items-center gap-4 text-gray-600 text-sm pt-2 border-t border-gray-300'>
             <div className='flex items-center gap-1'>
-                <Heart className={`w-4 h-4 cursor-pointer ${likes.includes(currentuser._id) && 'fill-red-500 text-red-500'}`} onClick={handleLike} />
-                <span>{liked.length}</span>
+                <Heart className={`w-4 h-4 cursor-pointer ${likeState.likedByMe && 'fill-red-500 text-red-500'}`} onClick={handleLike} />
+                <span>{likeState.count}</span>
             </div>
             <div className='flex items-center gap-1'>
-                <MessageCircle className='w-4 h-4 cursor-pointer' />
-                <span>{12}</span>
+                <MessageCircle className='w-4 h-4 cursor-pointer' onClick={() => setDetailOpen(true)} />
+                <span>{post.comments_count ?? post.commentsCount ?? 0}</span>
             </div>
             <div className='flex items-center gap-1'>
                 <Share2 className='w-4 h-4 cursor-pointer' />
                 <span>{7}</span>
             </div>
         </div>
+        {detailOpen && (
+            <PostDetailModal
+                post={post}
+                likes={[
+                    ...(likeState.likedByMe ? [currentuser._id] : []),
+                    ...Array.from({ length: Math.max(0, likeState.count - (likeState.likedByMe ? 1 : 0)) }),
+                ]}
+                onToggleLike={handleLike}
+                onClose={() => setDetailOpen(false)}
+            />
+        )}
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { X, Heart, Send, BadgeCheck } from 'lucide-react'
 import moment from 'moment'
-import { dummyCommentsData, dummyUserData } from '../assets/assets'
+import { dummyUserData } from '../assets/assets'
 
 const PostDetailModal = ({ post, onClose, likes = [], onToggleLike }) => {
-  const [comments, setComments] = useState(dummyCommentsData)
+  const [comments, setComments] = useState([])
   const [commentInput, setCommentInput] = useState('')
   const inputRef = useRef(null)
   const currentUser = dummyUserData

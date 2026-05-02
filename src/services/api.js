@@ -73,6 +73,30 @@ export const api = {
     followers: (userId) => request(`/connections/${userId}/followers`),
     following: (userId) => request(`/connections/${userId}/following`),
   },
+  admin: {
+    stats: () => request('/admin/stats'),
+    userGrowth: (range = '7d') => request(`/admin/analytics/users?range=${range}`),
+    postActivity: (range = '7d') => request(`/admin/analytics/posts?range=${range}`),
+    engagement: (range = '7d') => request(`/admin/analytics/engagement?range=${range}`),
+    trendingHashtags: (range = '24h') => request(`/admin/trending/hashtags?range=${range}`),
+    viralProfiles: (range = '7d') => request(`/admin/trending/profiles?range=${range}`),
+    viralPosts: (range = '7d') => request(`/admin/trending/posts?range=${range}`),
+    users: () => request('/admin/users'),
+    reports: (status) => request(`/admin/reports${status ? `?status=${status}` : ''}`),
+    reviewReport: (id, action) => request(`/admin/reports/${id}`, { method: 'PATCH', body: JSON.stringify({ action }) }),
+    deletePost: (id) => request(`/admin/posts/${id}`, { method: 'DELETE' }),
+    muteUser: (id, muted) => request(`/admin/users/${id}/mute`, { method: 'PATCH', body: JSON.stringify({ muted }) }),
+    banUser: (id, banned) => request(`/admin/users/${id}/ban`, { method: 'PATCH', body: JSON.stringify({ banned }) }),
+    updateRole: (id, role) => request(`/admin/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role }) }),
+    deleteUser: (id) => request(`/admin/users/${id}`, { method: 'DELETE' }),
+    pinHashtag: (name) => request('/admin/hashtags/pin', { method: 'POST', body: JSON.stringify({ name }) }),
+    getBannedWords: () => request('/admin/banned-words'),
+    addBannedWord: (word) => request('/admin/banned-words', { method: 'POST', body: JSON.stringify({ word }) }),
+    removeBannedWord: (id) => request(`/admin/banned-words/${id}`, { method: 'DELETE' }),
+  },
+  reports: {
+    create: (payload) => request('/reports', { method: 'POST', body: JSON.stringify(payload) }),
+  },
 }
 
 export const ensureDemoSession = async () => {
@@ -93,21 +117,32 @@ export const normalizeUser = (user) => ({
   full_name: user?.full_name ?? user?.fullName ?? '',
   profile_picture: user?.profile_picture || user?.profilePicture || '',
   cover_photo: user?.cover_photo || user?.coverPhoto || '',
+  is_verified: Boolean(user?.is_verified ?? user?.verified ?? false),
+  isPrivate: Boolean(user?.isPrivate ?? user?.privateAccount ?? false),
+  role: user?.role || 'USER',
   followers: Array.from({ length: user?.followersCount || user?.followers?.length || 0 }),
   following: Array.from({ length: user?.followingCount || user?.following?.length || 0 }),
 })
 
-export const normalizePost = (post) => ({
-  ...post,
-  _id: String(post?._id ?? post?.id ?? ''),
-  user: normalizeUser(post?.user || {}),
-  image_urls: post?.image_urls || post?.imageUrls || [],
-  video_url: post?.video_url || post?.videoUrl || '',
-  post_type: post?.post_type || post?.postType || 'text',
-  likes_count: post?.likes_count?.length
+export const normalizePost = (post) => {
+  const likesCount = Array.isArray(post?.likes_count)
     ? post.likes_count
-    : Array.from({ length: post?.likesTotal || 0 }),
-})
+    : Array.isArray(post?.likesCount)
+      ? post.likesCount
+      : Array.from({ length: Number(post?.likesTotal || 0) })
+
+  return {
+    ...post,
+    _id: String(post?._id ?? post?.id ?? ''),
+    user: normalizeUser(post?.user || {}),
+    image_urls: post?.image_urls || post?.imageUrls || [],
+    video_url: post?.video_url || post?.videoUrl || '',
+    post_type: post?.post_type || post?.postType || 'text',
+    likes_count: likesCount,
+    likesTotal: Number(post?.likesTotal ?? likesCount.length ?? 0),
+    likedByMe: Boolean(post?.likedByMe ?? post?.liked_by_me ?? false),
+  }
+}
 
 export const normalizeStory = (story) => ({
   ...story,
@@ -118,11 +153,20 @@ export const normalizeStory = (story) => ({
   background_color: story?.background_color || story?.backgroundColor || '#4f46e5',
 })
 
-export const normalizeMessage = (message) => ({
-  ...message,
-  _id: String(message?._id ?? message?.id ?? ''),
-  from_user_id: message?.from_user_id || message?.fromUserId || message?.sender,
-  to_user_id: message?.to_user_id || message?.toUserId || message?.receiver,
-  message_type: message?.message_type || message?.messageType || 'text',
-  media_url: message?.media_url || message?.mediaUrl || '',
-})
+export const normalizeMessage = (message) => {
+  const fromSource = message?.from_user_id ?? message?.fromUserId ?? message?.sender
+  const toSource = message?.to_user_id ?? message?.toUserId ?? message?.receiver
+  const sender = message?.sender || (typeof fromSource === 'object' ? fromSource : null)
+  const receiver = message?.receiver || (typeof toSource === 'object' ? toSource : null)
+
+  return {
+    ...message,
+    _id: String(message?._id ?? message?.id ?? ''),
+    from_user_id: String(typeof fromSource === 'object' ? fromSource?._id ?? fromSource?.id ?? '' : fromSource ?? ''),
+    to_user_id: String(typeof toSource === 'object' ? toSource?._id ?? toSource?.id ?? '' : toSource ?? ''),
+    sender: sender ? normalizeUser(sender) : sender,
+    receiver: receiver ? normalizeUser(receiver) : receiver,
+    message_type: message?.message_type || message?.messageType || 'text',
+    media_url: message?.media_url || message?.mediaUrl || '',
+  }
+}

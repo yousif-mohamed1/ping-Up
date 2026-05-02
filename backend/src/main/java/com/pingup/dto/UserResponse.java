@@ -22,6 +22,7 @@ public class UserResponse {
     public boolean verified;
     @JsonProperty("isPrivate")
     public boolean privateAccount;
+    public String role;
     public long followersCount;
     public long followingCount;
     public Instant createdAt;

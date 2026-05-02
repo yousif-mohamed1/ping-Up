@@ -23,6 +23,7 @@ public final class Mapper {
         dto.website = user.getWebsite();
         dto.verified = user.isVerified();
         dto.privateAccount = user.isPrivateAccount();
+        dto.role = user.getRole();
         dto.followersCount = followers;
         dto.followingCount = following;
         dto.createdAt = user.getCreatedAt();

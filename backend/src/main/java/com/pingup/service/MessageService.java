@@ -26,6 +26,7 @@ public class MessageService {
         this.userService = userService;
     }
 
+    @Transactional(readOnly = true)
     public List<MessageDtos.MessageResponse> conversation(Long userId) {
         User current = userService.currentUser();
         User other = userService.getUser(userId);
@@ -34,6 +35,7 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MessageDtos.MessageResponse> recent() {
         User current = userService.currentUser();
         Map<Long, Message> latestByContact = new LinkedHashMap<Long, Message>();

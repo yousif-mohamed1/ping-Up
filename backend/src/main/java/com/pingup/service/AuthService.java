@@ -49,14 +49,15 @@ public class AuthService {
         user.setProfilePicture("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200");
         user.setCoverPhoto("");
         user.setVerified(false);
+        user.setRole("USER");
         User saved = userRepository.save(user);
-        return new AuthDtos.AuthResponse(jwtService.generateToken(saved.getEmail()), Mapper.toUser(saved, 0, 0));
+        return new AuthDtos.AuthResponse(jwtService.generateToken(saved.getEmail(), saved.getRole()), Mapper.toUser(saved, 0, 0));
     }
 
     public AuthDtos.AuthResponse login(AuthDtos.LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email, request.password));
         User user = userRepository.findByEmail(request.email)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
-        return new AuthDtos.AuthResponse(jwtService.generateToken(user.getEmail()), Mapper.toUser(user, 0, 0));
+        return new AuthDtos.AuthResponse(jwtService.generateToken(user.getEmail(), user.getRole()), Mapper.toUser(user, 0, 0));
     }
 }

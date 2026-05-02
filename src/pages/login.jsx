@@ -1,9 +1,52 @@
-﻿import React from 'react'
-import { Star } from 'lucide-react'
+import React, { useState } from 'react'
+import { Star, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { assets } from '../assets/assets'
-import { SignIn } from '@clerk/clerk-react'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 const Login = () => {
+  const { login, register } = useAuth()
+  const navigate = useNavigate()
+
+  const [isRegister, setIsRegister] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+    username: '',
+    fullName: '',
+  })
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      if (isRegister) {
+        await register({
+          email: form.email,
+          username: form.username,
+          fullName: form.fullName,
+          password: form.password,
+        })
+        toast.success('Account created successfully!')
+      } else {
+        await login(form.email, form.password)
+        toast.success('Welcome back!')
+      }
+      navigate('/feed')
+    } catch (err) {
+      toast.error(err.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className='min-h-screen relative overflow-hidden'>
       {/* back ground image */}
@@ -43,9 +86,125 @@ const Login = () => {
             </p>
           </div>
 
-          {/* Right Side : Login Form */}
+          {/* Right Side : Login / Register Form */}
           <div className='flex-1 flex items-center justify-center p-6 sm:p-10'>
-            <SignIn />
+            <div className='w-full max-w-md'>
+              <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/40 p-8'>
+                <h2 className='text-2xl font-bold text-gray-900 mb-1'>
+                  {isRegister ? 'Create account' : 'Welcome back'}
+                </h2>
+                <p className='text-sm text-gray-500 mb-6'>
+                  {isRegister
+                    ? 'Join the community today'
+                    : 'Sign in to your account'}
+                </p>
+
+                <form onSubmit={handleSubmit} className='space-y-4' id="auth-form">
+                  {isRegister && (
+                    <>
+                      <div>
+                        <label htmlFor="fullName" className='block text-sm font-medium text-gray-700 mb-1'>
+                          Full Name
+                        </label>
+                        <input
+                          id="fullName"
+                          name="fullName"
+                          type="text"
+                          required
+                          value={form.fullName}
+                          onChange={handleChange}
+                          placeholder="John Doe"
+                          className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white/60 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition'
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="username" className='block text-sm font-medium text-gray-700 mb-1'>
+                          Username
+                        </label>
+                        <input
+                          id="username"
+                          name="username"
+                          type="text"
+                          required
+                          value={form.username}
+                          onChange={handleChange}
+                          placeholder="johndoe"
+                          className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white/60 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition'
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  <div>
+                    <label htmlFor="email" className='block text-sm font-medium text-gray-700 mb-1'>
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      value={form.email}
+                      onChange={handleChange}
+                      placeholder="you@example.com"
+                      className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white/60 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition'
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="password" className='block text-sm font-medium text-gray-700 mb-1'>
+                      Password
+                    </label>
+                    <div className='relative'>
+                      <input
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        minLength={6}
+                        value={form.password}
+                        onChange={handleChange}
+                        placeholder="••••••••"
+                        className='w-full px-4 py-2.5 pr-11 rounded-lg border border-gray-300 bg-white/60 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition'
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition'
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    id="auth-submit-btn"
+                    type="submit"
+                    disabled={loading}
+                    className='w-full py-2.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] text-white font-semibold shadow-md transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed'
+                  >
+                    {loading && <Loader2 className='w-4 h-4 animate-spin' />}
+                    {isRegister ? 'Create Account' : 'Sign In'}
+                  </button>
+                </form>
+
+                <div className='mt-6 text-center text-sm text-gray-600'>
+                  {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
+                  <button
+                    id="auth-toggle-btn"
+                    type="button"
+                    onClick={() => {
+                      setIsRegister(!isRegister)
+                      setForm({ email: '', password: '', username: '', fullName: '' })
+                    }}
+                    className='text-indigo-600 font-semibold hover:text-indigo-800 transition'
+                  >
+                    {isRegister ? 'Sign In' : 'Sign Up'}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>

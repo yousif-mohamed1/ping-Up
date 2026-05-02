@@ -38,6 +38,12 @@ public class User {
     private String website;
     private boolean verified;
     private boolean privateAccount;
+    @Column(nullable = false)
+    private String role = "USER";
+    private boolean muted;
+    private boolean banned;
+    private Instant mutedAt;
+    private Instant bannedAt;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -77,6 +83,16 @@ public class User {
     public void setVerified(boolean verified) { this.verified = verified; }
     public boolean isPrivateAccount() { return privateAccount; }
     public void setPrivateAccount(boolean privateAccount) { this.privateAccount = privateAccount; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+    public boolean isMuted() { return muted; }
+    public void setMuted(boolean muted) { this.muted = muted; }
+    public boolean isBanned() { return banned; }
+    public void setBanned(boolean banned) { this.banned = banned; }
+    public Instant getMutedAt() { return mutedAt; }
+    public void setMutedAt(Instant mutedAt) { this.mutedAt = mutedAt; }
+    public Instant getBannedAt() { return bannedAt; }
+    public void setBannedAt(Instant bannedAt) { this.bannedAt = bannedAt; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

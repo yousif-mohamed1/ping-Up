@@ -55,6 +55,36 @@ email: admin@example.com
 password: password123
 ```
 
+## Run Everything With Docker
+
+Start Docker Desktop first, then stop any local backend/frontend servers already using ports `3306`, `8080`, or `5173`.
+
+From the project root:
+
+```powershell
+docker compose up --build
+```
+
+This starts:
+
+```text
+frontend: http://localhost:5173
+backend:  http://localhost:8080/api
+mysql:    localhost:3306
+```
+
+To stop everything:
+
+```powershell
+docker compose down
+```
+
+To stop everything and delete the MySQL data volume:
+
+```powershell
+docker compose down -v
+```
+
 ## Features
 
 - Clerk-powered frontend login screen

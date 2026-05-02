@@ -1,39 +1,53 @@
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\entity\Follow.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\repository\UserRepository.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\PingUpApplication.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\dto\PostDtos.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\controller\MessageController.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\config\SecurityConfig.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\config\DataSeeder.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\service\FollowService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\dto\AuthDtos.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\repository\PostRepository.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\service\AuthService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\security\JwtService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\exception\GlobalExceptionHandler.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\entity\PostLike.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\dto\UserDtos.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\repository\StoryRepository.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\security\CustomUserDetailsService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\dto\UserResponse.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\service\PostService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\controller\PostController.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\service\UserService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\dto\StoryDtos.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\service\StoryService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\repository\MessageRepository.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\service\MessageService.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\repository\PostLikeRepository.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\exception\ApiException.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\controller\StoryController.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\controller\AuthController.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\entity\Message.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\repository\FollowRepository.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\entity\User.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\entity\Story.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\controller\ConnectionController.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\entity\Post.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\dto\Mapper.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\controller\UserController.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\dto\MessageDtos.java
-E:\Spring boot\ping-Up-main\backend\src\main\java\com\pingup\security\JwtAuthenticationFilter.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\ReportController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\UserResponse.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\MessageDtos.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\AdminController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\AuthDtos.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\Report.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\PostDtos.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\AdminDtos.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\service\AdminService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\ConnectionController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\FollowRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\config\DataSeeder.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\UserController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\PingUpApplication.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\Mapper.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\UserDtos.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\Hashtag.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\PostHashtagRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\UserRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\service\AuthService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\MessageController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\PostRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\HashtagRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\ReportRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\PostLike.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\Story.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\service\FollowService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\PostController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\StoryRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\service\MessageService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\exception\ApiException.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\security\CustomUserDetailsService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\Message.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\PostHashtag.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\MessageRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\service\UserService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\PostLikeRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\Follow.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\security\JwtAuthenticationFilter.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\BannedWord.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\dto\StoryDtos.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\User.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\security\JwtService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\security\CustomAccessDeniedHandler.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\repository\BannedWordRepository.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\StoryController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\service\PostService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\entity\Post.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\controller\AuthController.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\security\JwtAuthenticationEntryPoint.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\service\StoryService.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\exception\GlobalExceptionHandler.java
+C:\Users\yousu\OneDrive\Desktop\ping-Up-main\backend\src\main\java\com\pingup\config\SecurityConfig.java

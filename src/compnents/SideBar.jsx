@@ -1,14 +1,21 @@
-﻿import React from 'react'
+import React from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import MenuItems from './MenuItems'
-import { assets, dummyUserData } from '../assets/assets'
-import { CirclePlus, LogOut, Settings2 } from 'lucide-react'
-import {UserButton,useClerk} from '@clerk/clerk-react'
+import { assets } from '../assets/assets'
+import { CirclePlus, LogOut, Settings2, Shield } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate()
-  const user= dummyUserData   // will be replaced by clerk user data in future
-  const { signOut } = useClerk()
+  const { user, signOut } = useAuth()
+
+  const handleSignOut = () => {
+    signOut()
+    navigate('/')
+  }
+
+  const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'MODERATOR'
+
   return (
     <div
       className={`w-60 xl:w-72 bg-white border-r border-gray-200 flex flex-col justify-between items-center max-sm:absolute top-0 bottom-0 z-20 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} sm:translate-x-0 transition-transform duration-300 ease-in-out`}
@@ -23,6 +30,19 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
         </Link>
       </div>
       <div className='w-full'>
+        {isAdmin && (
+          <div className='px-6 mb-1'>
+            <NavLink
+              to='/admin'
+              className={({ isActive }) =>
+                `px-3.5 py-2 flex items-center gap-3 rounded-lg text-sm font-medium ${isActive ? 'bg-gradient-to-r from-indigo-600 to-purple-700 text-white shadow-md' : 'text-indigo-600 hover:bg-indigo-50'}`
+              }
+            >
+              <Shield className='w-5 h-5' />
+              Admin Panel
+            </NavLink>
+          </div>
+        )}
         <div className='px-6 mb-2'>
           <NavLink
             to='/settings'
@@ -37,14 +57,18 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
         <div className='w-full border-t border-gray-200 p-4 px-7'>
           <div className='flex gap-2 items-center justify-between'>
             <div className='flex gap-2 items-center cursor-pointer'>
-            <UserButton />
-            <div>
-              <h1 className='text-sm font-medium'>{user.full_name}</h1>
-              <p className='text-xs text-gray-500'>@{user.username}</p>
-            </div>
+              <img
+                src={user?.profile_picture || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.full_name || 'U')}
+                alt="avatar"
+                className='w-9 h-9 rounded-full object-cover border-2 border-indigo-200'
+              />
+              <div>
+                <h1 className='text-sm font-medium'>{user?.full_name}</h1>
+                <p className='text-xs text-gray-500'>@{user?.username}</p>
+              </div>
             </div>
             <button
-              onClick={() => signOut()}
+              onClick={handleSignOut}
               className='p-1.5 text-gray-400 hover:text-gray-700 transition cursor-pointer rounded-md hover:bg-gray-100'
               aria-label='Logout'
               title='Logout'

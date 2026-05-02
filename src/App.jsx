@@ -1,4 +1,4 @@
-﻿import React from 'react'
+import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Login from './pages/login'
 import Feed from './pages/feed'
@@ -10,11 +10,16 @@ import Profile from './pages/profile'
 import CreatePost from './pages/create_post'
 import Settings from './pages/settings'
 import Layout from './pages/layout'
-import { useUser } from '@clerk/clerk-react'
+import AdminPage from './pages/admin'
+import { useAuth } from './context/AuthContext'
 import { Toaster } from 'react-hot-toast'
+import Loading from './compnents/loading'
 
 export const App = () => {
-  const { user } = useUser()
+  const { user, loading } = useAuth()
+
+  if (loading) return <Loading />
+
   return (
   <>
     <Toaster />
@@ -30,6 +35,7 @@ export const App = () => {
         <Route path='profile/:profileId' element={<Profile />} />
         <Route path='settings' element={<Settings />} />
         <Route path='create-post' element={<CreatePost />} />
+        <Route path='admin' element={<AdminPage />} />
       </Route>
     </Routes>
   </>

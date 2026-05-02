@@ -1,0 +1,371 @@
+# PingUp Admin System — Three-Tier RBAC + Full Dashboard
+
+## Background
+
+Building on the prior security audit, this plan upgrades from a flat single-role system to a **three-tier RBAC** with a **full admin dashboard** featuring analytics, trending content, moderation tools, and admin controls.
+
+---
+
+## Decisions (From Your Feedback)
+
+| Question | Decision |
+|----------|----------|
+| Admin capabilities | Two-tier privileged roles: **MODERATOR** + **SUPER_ADMIN** |
+| Dashboard design | Full layout: stats bar, charts (Recharts), trending, moderation, controls |
+| First admin creation | **Env var** approach: `FIRST_ADMIN_EMAIL` in `.env` / application.properties |
+
+---
+
+## Role Hierarchy
+
+| Role | Powers |
+|------|--------|
+| `USER` | Normal user — post, like, follow, message |
+| `MODERATOR` | Hide/delete any post, mute users, view & act on reports |
+| `SUPER_ADMIN` | All moderator powers + ban users, promote/demote mods, view analytics, manage hashtags |
+
+---
+
+## Phase 1: New Entities
+
+### [NEW] `Hashtag.java` — `com.pingup.entity`
+- `id` (Long), `name` (String, unique, lowercase), `createdAt` (Instant)
+
+### [NEW] `PostHashtag.java` — `com.pingup.entity`
+- Join entity: `id`, `@ManyToOne Post post`, `@ManyToOne Hashtag hashtag`, `createdAt`
+- Unique constraint on `(post_id, hashtag_id)`
+
+### [NEW] `Report.java` — `com.pingup.entity`
+- `id`, `@ManyToOne User reporter`, `@ManyToOne Post post`, `reason` (String), `status` (String: `PENDING`/`REVIEWED`/`DISMISSED`), `createdAt`, `reviewedAt`, `@ManyToOne User reviewedBy`
+
+### [NEW] `BannedWord.java` — `com.pingup.entity`
+- `id`, `word` (String, unique, lowercase), `createdAt`, `@ManyToOne User createdBy`
+
+### [MODIFY] `User.java`
+- Add `role` field: `@Column(nullable = false) private String role = "USER";`
+- Add `muted` (boolean, default false), `banned` (boolean, default false), `mutedAt`, `bannedAt`
+- Add getters/setters for all new fields
+
+---
+
+## Phase 2: Repository Layer
+
+### [NEW] `HashtagRepository.java`
+```java
+Optional<Hashtag> findByName(String name);
+// Trending: top hashtags by usage in time range
+@Query("SELECT h, COUNT(ph) as cnt FROM Hashtag h JOIN PostHashtag ph ON ph.hashtag = h " +
+       "WHERE ph.createdAt > :since GROUP BY h ORDER BY cnt DESC")
+List<Object[]> findTrending(@Param("since") Instant since, Pageable pageable);
+```
+
+### [NEW] `PostHashtagRepository.java`
+```java
+List<PostHashtag> findByPost(Post post);
+void deleteByPost(Post post);
+```
+
+### [NEW] `ReportRepository.java`
+```java
+List<Report> findByStatusOrderByCreatedAtDesc(String status);
+long countByStatus(String status);
+```
+
+### [NEW] `BannedWordRepository.java`
+```java
+Optional<BannedWord> findByWord(String word);
+boolean existsByWord(String word);
+```
+
+### [MODIFY] `PostRepository.java` — add analytics queries
+```java
+long countByCreatedAtAfter(Instant since);  // posts today
+// Top posts by likes
+@Query("SELECT p, COUNT(pl) as cnt FROM Post p LEFT JOIN PostLike pl ON pl.post = p " +
+       "WHERE p.createdAt > :since GROUP BY p ORDER BY cnt DESC")
+List<Object[]> findTopByLikes(@Param("since") Instant since, Pageable pageable);
+```
+
+### [MODIFY] `UserRepository.java` — add analytics queries
+```java
+long countByCreatedAtAfter(Instant since);     // new signups
+Optional<User> findByEmail(String email);       // already exists
+long countByBannedTrue();
+long countByMutedTrue();
+```
+
+### [MODIFY] `FollowRepository.java` — viral profiles query
+```java
+// Top profiles by follower growth in time range
+@Query("SELECT f.following, COUNT(f) as cnt FROM Follow f " +
+       "WHERE f.createdAt > :since AND f.status = 'ACCEPTED' " +
+       "GROUP BY f.following ORDER BY cnt DESC")
+List<Object[]> findTopByFollowerGrowth(@Param("since") Instant since, Pageable pageable);
+```
+
+### [MODIFY] `PostLikeRepository.java`
+```java
+long countByCreatedAtAfter(Instant since);  // engagement metric
+```
+
+---
+
+## Phase 3: Security Layer
+
+### [MODIFY] `User.java` role field
+Already covered in Phase 1.
+
+### [MODIFY] `CustomUserDetailsService.java`
+- Replace `Collections.emptyList()` with real authorities:
+  - `"USER"` → `ROLE_USER`
+  - `"MODERATOR"` → `ROLE_USER` + `ROLE_MODERATOR`
+  - `"SUPER_ADMIN"` → `ROLE_USER` + `ROLE_MODERATOR` + `ROLE_ADMIN`
+
+### [MODIFY] `JwtService.java`
+- `generateToken(String email, String role)` — embed role as claim
+- Add `getRole(String token)` method
+- Remove hardcoded fallback secret at line 44-45 — throw `IllegalStateException` instead
+
+### [MODIFY] `JwtAuthenticationFilter.java`
+- Add SLF4J logger for caught exceptions (fix silent swallow)
+
+### [NEW] `JwtAuthenticationEntryPoint.java` — `com.pingup.security`
+- Implements `AuthenticationEntryPoint`, returns `401` JSON
+
+### [NEW] `CustomAccessDeniedHandler.java` — `com.pingup.security`
+- Implements `AccessDeniedHandler`, returns `403` JSON
+
+### [MODIFY] `SecurityConfig.java` — `com.pingup.config`
+1. Inject `JwtAuthenticationEntryPoint` + `CustomAccessDeniedHandler`
+2. Register via `.exceptionHandling()`
+3. Add rules:
+   ```
+   /auth/**, /h2-console/**, /error           → permitAll
+   GET /users/**, /posts/**, /stories/**, etc. → permitAll
+   /admin/**                                   → hasRole("ADMIN")
+   /mod/**                                     → hasRole("MODERATOR")
+   anyRequest()                                → authenticated
+   ```
+
+---
+
+## Phase 4: Backend Admin Feature
+
+### [MODIFY] `AuthService.java`
+- `register()`: set `user.setRole("USER")` explicitly
+- Both `register()` and `login()`: pass role to `generateToken(email, role)`
+
+### [MODIFY] `DataSeeder.java`
+- Read `FIRST_ADMIN_EMAIL` from `@Value("${app.admin.first-email:}")` 
+- If set and user exists with that email → set role to `SUPER_ADMIN`
+- Default seeded user `john` → `SUPER_ADMIN`, `richard`/`alexa` → `USER`
+- Seed sample hashtags from existing post content (`#team`, `#Motivation`, `#GrowthMindset`)
+
+### [NEW] `AdminController.java` — all under `/admin/**`
+
+| Method | Path | Role Required | Description |
+|--------|------|---------------|-------------|
+| GET | `/admin/stats` | ADMIN | Dashboard quick stats |
+| GET | `/admin/analytics/users?range=7d` | ADMIN | User growth data points |
+| GET | `/admin/analytics/posts?range=7d` | ADMIN | Post activity data points |
+| GET | `/admin/analytics/engagement?range=7d` | ADMIN | Engagement rate data |
+| GET | `/admin/trending/hashtags?range=24h` | ADMIN | Top 10 hashtags |
+| GET | `/admin/trending/profiles?range=7d` | ADMIN | Top viral profiles |
+| GET | `/admin/trending/posts?range=7d` | ADMIN | Top 5 viral posts |
+| GET | `/admin/users` | MODERATOR | List all users with roles |
+| GET | `/admin/reports` | MODERATOR | Flagged posts queue |
+| PATCH | `/admin/reports/{id}` | MODERATOR | Review a report (keep/dismiss/delete) |
+| DELETE | `/admin/posts/{id}` | MODERATOR | Delete/hide any post |
+| PATCH | `/admin/users/{id}/mute` | MODERATOR | Mute/unmute a user |
+| PATCH | `/admin/users/{id}/ban` | ADMIN | Ban/unban a user |
+| PATCH | `/admin/users/{id}/role` | ADMIN | Promote/demote role |
+| DELETE | `/admin/users/{id}` | ADMIN | Delete user |
+| POST | `/admin/hashtags/pin` | ADMIN | Pin a hashtag |
+| POST | `/admin/banned-words` | ADMIN | Ban a word |
+| DELETE | `/admin/banned-words/{id}` | ADMIN | Unban a word |
+
+### [NEW] `AdminService.java`
+Implements all business logic for the above endpoints. Key methods:
+- `getStats()` — counts from all repositories
+- `getUserGrowthData(range)` — groups user signups by day
+- `getPostActivityData(range)` — groups posts by day
+- `getEngagementData(range)` — groups likes by day
+- `getTrendingHashtags(range)` — top 10 from PostHashtag join
+- `getViralProfiles(range)` — top by follower growth rate
+- `getViralPosts(range)` — top 5 by like count
+- `banUser(id)` / `muteUser(id)` — with self-protection guards
+- `updateRole(id, role)` — validates role string, prevents self-demotion
+
+### [NEW] `AdminDtos.java` — `com.pingup.dto`
+- `StatsResponse` — `totalUsers, postsToday, activeReports, newSignups7d`
+- `TimeSeriesPoint` — `date (String), count (long)` — for all chart data
+- `TrendingHashtagResponse` — `name, count, sparklineData[]`
+- `ViralProfileResponse` — `user (UserResponse), followerGrowth, engagementScore`
+- `ViralPostResponse` — `post (PostResponse), totalLikes`
+- `ReportResponse` — `id, reporter, post preview, reason, status, createdAt`
+- `UpdateRoleRequest` — `role: "USER" | "MODERATOR" | "SUPER_ADMIN"`
+- `BannedWordResponse` — `id, word, createdAt`
+
+### [MODIFY] `UserResponse.java`
+- Add `public String role;`
+
+### [MODIFY] `Mapper.java`
+- Map `user.getRole()` → `dto.role`
+
+### [NEW] `ReportController.java` — user-facing, under `/reports`
+- `POST /reports` — any authenticated user can flag a post (reporter, postId, reason)
+
+---
+
+## Phase 5: Config / Properties
+
+### [MODIFY] `application.properties`
+```properties
+app.admin.first-email=${FIRST_ADMIN_EMAIL:}
+```
+
+### [MODIFY] `application-h2.properties`
+```properties
+app.admin.first-email=${FIRST_ADMIN_EMAIL:admin@example.com}
+```
+
+---
+
+## Phase 6: Frontend
+
+### Install Recharts
+```bash
+npm install recharts
+```
+
+### [MODIFY] `api.js` — add admin namespace
+```js
+admin: {
+  stats: () => request('/admin/stats'),
+  userGrowth: (range = '7d') => request(`/admin/analytics/users?range=${range}`),
+  postActivity: (range = '7d') => request(`/admin/analytics/posts?range=${range}`),
+  engagement: (range = '7d') => request(`/admin/analytics/engagement?range=${range}`),
+  trendingHashtags: (range = '24h') => request(`/admin/trending/hashtags?range=${range}`),
+  viralProfiles: (range = '7d') => request(`/admin/trending/profiles?range=${range}`),
+  viralPosts: (range = '7d') => request(`/admin/trending/posts?range=${range}`),
+  users: () => request('/admin/users'),
+  reports: () => request('/admin/reports'),
+  reviewReport: (id, action) => request(`/admin/reports/${id}`, { method: 'PATCH', body: JSON.stringify({ action }) }),
+  deletePost: (id) => request(`/admin/posts/${id}`, { method: 'DELETE' }),
+  muteUser: (id, muted) => request(`/admin/users/${id}/mute`, { method: 'PATCH', body: JSON.stringify({ muted }) }),
+  banUser: (id, banned) => request(`/admin/users/${id}/ban`, { method: 'PATCH', body: JSON.stringify({ banned }) }),
+  updateRole: (id, role) => request(`/admin/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role }) }),
+  deleteUser: (id) => request(`/admin/users/${id}`, { method: 'DELETE' }),
+  pinHashtag: (name) => request('/admin/hashtags/pin', { method: 'POST', body: JSON.stringify({ name }) }),
+  addBannedWord: (word) => request('/admin/banned-words', { method: 'POST', body: JSON.stringify({ word }) }),
+  removeBannedWord: (id) => request(`/admin/banned-words/${id}`, { method: 'DELETE' }),
+},
+reports: {
+  create: (payload) => request('/reports', { method: 'POST', body: JSON.stringify(payload) }),
+}
+```
+
+### [NEW] `admin.jsx` — `src/pages/admin.jsx`
+
+Full dashboard page with 4 sections:
+
+**Top Bar (Quick Stats)** — 4 stat cards: Total Users, Posts Today, Active Reports, New Signups (7d)
+
+**Section 1: Analytics** — 3 Recharts charts:
+- Line chart: User Growth (daily/weekly/monthly toggle)
+- Bar chart: Post Activity (posts per day)
+- Line chart: Engagement Rate (likes over time)
+
+**Section 2: Trending**
+- Trending Hashtags — ranked list with usage count badge
+- Viral Profiles — avatar + username + growth stat
+- Viral Posts — preview card with quick action buttons
+
+**Section 3: Moderation**
+- Flagged posts queue table: reporter, reason, content preview, Keep/Flag/Delete buttons
+- Banned/muted users list with unban/unmute actions
+
+**Section 4: Admin Controls** (SUPER_ADMIN only)
+- User search + role dropdown + promote/demote/ban buttons
+- Hashtag management: pin input + banned words list
+
+Role-gated: Moderators see sections 3 only. Super Admins see everything.
+
+### [MODIFY] `App.jsx`
+- Add: `import AdminPage from './pages/admin'`
+- Add route: `<Route path='admin' element={<AdminPage />} />`
+
+### [MODIFY] `SideBar.jsx`
+- Conditionally show "Admin Panel" link with `Shield` icon if user role is `MODERATOR` or `SUPER_ADMIN`
+- Read role from JWT decode or from `api.users.me()` response
+
+---
+
+## File Change Summary
+
+| Action | File | Layer |
+|--------|------|-------|
+| MODIFY | `User.java` | Entity |
+| NEW | `Hashtag.java` | Entity |
+| NEW | `PostHashtag.java` | Entity |
+| NEW | `Report.java` | Entity |
+| NEW | `BannedWord.java` | Entity |
+| NEW | `HashtagRepository.java` | Repository |
+| NEW | `PostHashtagRepository.java` | Repository |
+| NEW | `ReportRepository.java` | Repository |
+| NEW | `BannedWordRepository.java` | Repository |
+| MODIFY | `PostRepository.java` | Repository |
+| MODIFY | `UserRepository.java` | Repository |
+| MODIFY | `FollowRepository.java` | Repository |
+| MODIFY | `PostLikeRepository.java` | Repository |
+| MODIFY | `CustomUserDetailsService.java` | Security |
+| MODIFY | `JwtService.java` | Security |
+| MODIFY | `JwtAuthenticationFilter.java` | Security |
+| NEW | `JwtAuthenticationEntryPoint.java` | Security |
+| NEW | `CustomAccessDeniedHandler.java` | Security |
+| MODIFY | `SecurityConfig.java` | Config |
+| MODIFY | `DataSeeder.java` | Config |
+| MODIFY | `application.properties` | Config |
+| MODIFY | `application-h2.properties` | Config |
+| MODIFY | `AuthService.java` | Service |
+| NEW | `AdminService.java` | Service |
+| NEW | `AdminController.java` | Controller |
+| NEW | `ReportController.java` | Controller |
+| NEW | `AdminDtos.java` | DTO |
+| MODIFY | `UserResponse.java` | DTO |
+| MODIFY | `Mapper.java` | DTO |
+| MODIFY | `api.js` | Frontend |
+| NEW | `admin.jsx` | Frontend |
+| MODIFY | `App.jsx` | Frontend |
+| MODIFY | `SideBar.jsx` | Frontend |
+
+**Total: 13 new + 20 modified files**
+
+---
+
+## Implementation Order
+
+> [!IMPORTANT]
+> Build in this exact order to avoid compilation failures at any step:
+
+1. **Entities** — `Hashtag`, `PostHashtag`, `Report`, `BannedWord`, then modify `User`
+2. **Repositories** — all 4 new + 4 modified
+3. **Security** — `EntryPoint`, `AccessDeniedHandler`, modify `CustomUserDetailsService`, `JwtService`, `JwtAuthenticationFilter`
+4. **Config** — `SecurityConfig`, `DataSeeder`, properties files
+5. **DTOs** — `AdminDtos`, modify `UserResponse`, `Mapper`
+6. **Services** — `AdminService`, modify `AuthService`
+7. **Controllers** — `AdminController`, `ReportController`
+8. **Frontend** — install Recharts, `api.js`, `admin.jsx`, `App.jsx`, `SideBar.jsx`
+
+---
+
+## Verification Plan
+
+1. `cd backend && mvn clean compile` — no compilation errors
+2. `mvn spring-boot:run -Dspring-boot.run.profiles=h2` — starts clean
+3. Login as `admin@example.com` → JWT should contain `role: SUPER_ADMIN`
+4. `GET /api/admin/stats` with admin JWT → 200 with stats
+5. `GET /api/admin/stats` with regular user JWT → 403 Forbidden JSON
+6. `GET /api/admin/stats` with no JWT → 401 Unauthorized JSON
+7. Frontend: `npm install && npm run dev`, login as admin, navigate to `/admin`
+8. Verify charts render, trending section populates, moderation table shows
